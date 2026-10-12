@@ -13,7 +13,6 @@ namespace uy01.Controllers
         {
             _productRepository = productRepository;
         }
-
         public IActionResult Index()
         {
             var products = _productRepository.GetList();
@@ -27,12 +26,10 @@ namespace uy01.Controllers
             }).ToList();
             return View(productModels);
         }
-
         public IActionResult Add()
         {
             return View();
         }
-
 
         [HttpPost]
         public IActionResult Add(ProductModel model)
