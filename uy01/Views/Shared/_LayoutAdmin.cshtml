@@ -41,7 +41,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                <a class="nav-link" asp-controller="Admin" asp-action="Index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Ana Sayfa</span>
                 </a>
@@ -54,7 +54,13 @@
                     <span>Ürünler</span>
                 </a>
             </li>
-           
+
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Category" asp-action="Index">
+                    <i class="fas fa-fw fa-list"></i>
+                    <span>Kategoriler</span>
+                </a>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -186,6 +192,8 @@
     <!-- Custom scripts for all pages-->
     <script src="~/sbadmin/js/sb-admin-2.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @await Component.InvokeAsync("Notyf")
 </body>
 
 </html>

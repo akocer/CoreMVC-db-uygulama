@@ -13,5 +13,8 @@ namespace uy01.Models
         public decimal Price { get; set; }
 
         public bool IsActive { get; set; }
+
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }

@@ -1,0 +1,54 @@
+﻿@model List<CategoryModel>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="card-header"><h3>Kategoriler</h3></div>
+			<div class="card-body">
+				<a asp-action="Add" class="btn btn-outline-primary mb-3">Ekle</a>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Adı</th>
+							<th>Durumu</th>
+							<th>Düzenle - Sil</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var category in Model)
+						{
+							<tr>
+								<td>@category.Id</td>
+								<td>@category.Name</td>
+								<td>
+									@if (category.IsActive)
+									{
+										<span class="badge bg-success text-white">Aktif</span>
+									}
+									else
+									{
+										<span class="badge bg-danger text-white">Pasif</span>
+									}
+
+								</td>
+								<td>
+									<a asp-action="Update" asp-route-id="@category.Id" class="btn btn-outline-primary">Düzenle</a>
+									<a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-outline-danger">Sil</a>
+
+								</td>
+							</tr>
+						}
+
+
+					</tbody>
+
+				</table>
+
+			</div>
+			<div class="card-footer">Toplam Kategori Sayısı : @Model.Count</div>
+		</div>
+
+	</div>
+</div>
+

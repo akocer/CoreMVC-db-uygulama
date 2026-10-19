@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using uy01.Models;
 using uy01.Repositories;
 using uy01.ViewModels;
@@ -8,22 +10,19 @@ namespace uy01.Controllers
     public class ProductController : Controller
     {
         private readonly ProductRepository _productRepository;
+        private readonly IMapper _mapper;
+        private readonly INotyfService _notify;
 
-        public ProductController(ProductRepository productRepository)
+        public ProductController(ProductRepository productRepository, IMapper mapper, INotyfService notify)
         {
             _productRepository = productRepository;
+            _mapper = mapper;
+            _notify = notify;
         }
         public IActionResult Index()
         {
             var products = _productRepository.GetList();
-            var productModels = products.Select(p => new ProductModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                IsActive = p.IsActive
-            }).ToList();
+            var productModels = _mapper.Map<List<ProductModel>>(products);
             return View(productModels);
         }
         public IActionResult Add()
@@ -39,24 +38,26 @@ namespace uy01.Controllers
                 return View(model);
 
             }
+
+            var products = _productRepository.GetList();
+            if (products.Count(c => c.Name == model.Name) > 0)
+            {
+                _notify.Error(model.Name + " adlı ürün kayıtlıdır!");
+                return View(model);
+            }
             var product = new Product();
             product.Name = model.Name;
             product.Description = model.Description;
             product.Price = model.Price;
             product.IsActive = model.IsActive;
             _productRepository.Add(product);
-
+            _notify.Success("Ürün Eklendi");
             return RedirectToAction("Index");
         }
         public IActionResult Update(int id)
         {
             var product = _productRepository.GetById(id);
-            var productModel = new ProductModel();
-            productModel.Id = product.Id;
-            productModel.Name = product.Name;
-            productModel.Description = product.Description;
-            productModel.Price = product.Price;
-            productModel.IsActive = product.IsActive;
+            var productModel = _mapper.Map<ProductModel>(product);
             return View(productModel);
         }
 
@@ -75,19 +76,14 @@ namespace uy01.Controllers
             product.IsActive = model.IsActive;
 
             _productRepository.Update(product);
-
+            _notify.Success("Ürün Güncellendi");
             return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int id)
         {
             var product = _productRepository.GetById(id);
-            var productModel = new ProductModel();
-            productModel.Id = product.Id;
-            productModel.Name = product.Name;
-            productModel.Description = product.Description;
-            productModel.Price = product.Price;
-            productModel.IsActive = product.IsActive;
+            var productModel = _mapper.Map<ProductModel>(product);
             return View(productModel);
          
         }
@@ -96,6 +92,7 @@ namespace uy01.Controllers
         public IActionResult Delete(ProductModel model)
         {
             _productRepository.Delete(model.Id);
+            _notify.Success("Ürün Silindi");
             return RedirectToAction("Index");
 
         }
