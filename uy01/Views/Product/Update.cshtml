@@ -8,7 +8,11 @@
             <div class="card-header"><h3>Ürün Düzenle</h3></div>
 			<div class="card-body">
                 <form asp-action="Update" method="post">
-
+                    <div class="mb-3">
+                        <label asp-for="CategoryId"></label>
+                        <select asp-for="CategoryId" class="form-control" asp-items="@ViewBag.Categories"></select>
+                        <span class="text-danger" asp-validation-for="CategoryId"></span>
+                    </div>
                     <div class="mb-3">
                         <label asp-for="Name"></label>
                         <input class="form-control" asp-for="Name" />

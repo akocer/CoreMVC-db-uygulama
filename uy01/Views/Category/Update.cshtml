@@ -1,0 +1,36 @@
+﻿@model CategoryModel
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-header"><h3>Kategori Güncelle</h3></div>
+			<div class="card-body">
+				<form asp-action="Update" method="post">
+
+					<div class="mb-3">
+						<label asp-for="Name"></label>
+						<input asp-for="Name" class="form-control" />
+						<input asp-for="Id" type="hidden" />
+						<span class="text-danger" asp-validation-for="Name"></span>
+					</div>
+					<div class="mb-3">
+						<input asp-for="IsActive" class="form-check-inline" />
+						<label asp-for="IsActive"></label>
+						<span class="text-danger" asp-validation-for="IsActive"></span>
+					</div>
+					<div class="mb-3">
+						
+						<input type="submit" value="Kaydet" class="btn btn-outline-primary" />
+						<a asp-action="Index" class="btn btn-outline-secondary">Vazgeç</a>
+					</div>
+
+				</form>
+
+
+			</div>
+		</div>
+	</div>
+</div>
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

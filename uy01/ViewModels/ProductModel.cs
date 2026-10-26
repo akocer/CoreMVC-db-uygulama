@@ -27,7 +27,10 @@ namespace uy01.ViewModels
         [Display(Name = "Aktif")]
         public bool IsActive { get; set; }
 
+        [Display(Name = "Kategori")]
         public int CategoryId { get; set; }
-        public CategoryModel Category { get; set; }
+
+        public string ? CategoryName { get; set; }
+        public CategoryModel ? Category { get; set; }
     }
 }
