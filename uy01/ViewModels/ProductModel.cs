@@ -31,6 +31,6 @@ namespace uy01.ViewModels
         public int CategoryId { get; set; }
 
         public string ? CategoryName { get; set; }
-        public CategoryModel ? Category { get; set; }
+       
     }
 }

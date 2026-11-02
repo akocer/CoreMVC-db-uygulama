@@ -21,9 +21,9 @@ namespace uy01.Controllers
             _notify = notify;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            var categories = _categoryRepository.GetList();
+            var categories =await _categoryRepository.GetAllAsync();
             var categoryModels = _mapper.Map<List<CategoryModel>>(categories);
             return View(categoryModels);
         }
@@ -33,43 +33,50 @@ namespace uy01.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(CategoryModel model)
+        public async Task< IActionResult> Add(CategoryModel model)
         {
+            if (_categoryRepository.Where(s => s.Name == model.Name).Count() > 0)
+            {
+                _notify.Error("Girilen Kategori Adı Kayıtlıdır!");
+                return View(model);
+            }
+            
+            
             var category = _mapper.Map<Category>(model);
-            _categoryRepository.Add(category);
+           await  _categoryRepository.AddAsync(category);
             _notify.Success("Kategori Eklendi.");
 
             return RedirectToAction("Index");
         }
 
-        public IActionResult Update(int id)
+        public async Task<IActionResult> UpdateAsync(int id)
         {
-            var category = _categoryRepository.GetById(id);
+            var category =await _categoryRepository.GetByIdAsync(id);
             var categoryModel = _mapper.Map<CategoryModel>(category);
             return View(categoryModel);
         }
 
         [HttpPost]
-        public IActionResult Update(CategoryModel model)
+        public async Task<IActionResult> UpdateAsync(CategoryModel model)
         {
             var category = _mapper.Map<Category>(model);
-            _categoryRepository.Update(category);
+            await _categoryRepository.UpdateAsync(category);
             _notify.Success("Kategori Güncellendi.");
             return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var category = _categoryRepository.GetById(id);
+            var category =await  _categoryRepository.GetByIdAsync(id);
             var categoryModel = _mapper.Map<CategoryModel>(category);
             return View(categoryModel);
         }
 
         [HttpPost]
 
-        public IActionResult Delete(CategoryModel model)
+        public async Task<IActionResult> DeleteAsync(CategoryModel model)
         {
-            _categoryRepository.Delete(model.Id);
+           await _categoryRepository.DeleteAsync(model.Id);
             _notify.Success("Kategori Silindi.");
             return RedirectToAction("Index");
         }

@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using uy01.Models;
 using uy01.Repositories;
 using uy01.ViewModels;
@@ -22,21 +23,21 @@ namespace uy01.Controllers
             _notify = notify;
             _categoryRepository = categoryRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var products = _productRepository.GetList();
+            var products =await _productRepository.GetAllAsync();
             var productModels = _mapper.Map<List<ProductModel>>(products);
 
             foreach (var product in productModels)
             {
-                var category = _categoryRepository.GetById(product.CategoryId);
+                var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
                 product.CategoryName = category.Name;
             }
             return View(productModels);
         }
-        public IActionResult Add()
+        public async Task<IActionResult> AddAsync()
         {
-            var categories = _categoryRepository.GetList();
+            var categories = await _categoryRepository.GetAllAsync();
             var categoryList = categories.Select(x => new SelectListItem
             {
                 Text = x.Name,
@@ -47,7 +48,7 @@ namespace uy01.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(ProductModel model)
+        public async Task<IActionResult> AddAsync(ProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -55,8 +56,8 @@ namespace uy01.Controllers
 
             }
 
-            var products = _productRepository.GetList();
-            if (products.Count(c => c.Name == model.Name) > 0)
+            var products = await _productRepository.Where(s=>s.Name==model.Name && s.CategoryId==model.CategoryId).ToListAsync();
+            if (products.Count() > 0)
             {
                 _notify.Error(model.Name + " adlı ürün kayıtlıdır!");
                 return View(model);
@@ -67,16 +68,16 @@ namespace uy01.Controllers
             product.Price = model.Price;
             product.IsActive = model.IsActive;
             product.CategoryId = model.CategoryId;
-            _productRepository.Add(product);
+            await _productRepository.AddAsync(product);
             _notify.Success("Ürün Eklendi");
             return RedirectToAction("Index");
         }
-        public IActionResult Update(int id)
+        public async Task<IActionResult> Update(int id)
         {
-            var product = _productRepository.GetById(id);
+            var product = await _productRepository.GetByIdAsync(id);
             var productModel = _mapper.Map<ProductModel>(product);
 
-            var categories = _categoryRepository.GetList();
+            var categories = await _categoryRepository.GetAllAsync();
             var categoryList = categories.Select(x => new SelectListItem
             {
                 Text = x.Name,
@@ -88,36 +89,36 @@ namespace uy01.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update(ProductModel model)
+        public async Task<IActionResult> UpdateAsync(ProductModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
 
             }
-            var product = _productRepository.GetById(model.Id);
+            var product =await _productRepository.GetByIdAsync(model.Id);
             product.Name = model.Name;
             product.Description = model.Description;
             product.Price = model.Price;
             product.IsActive = model.IsActive;
             product.CategoryId = model.CategoryId;
-            _productRepository.Update(product);
+            await _productRepository.UpdateAsync(product);
             _notify.Success("Ürün Güncellendi");
             return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var product = _productRepository.GetById(id);
+            var product =await _productRepository.GetByIdAsync(id);
             var productModel = _mapper.Map<ProductModel>(product);
             return View(productModel);
-         
+
         }
 
         [HttpPost]
-        public IActionResult Delete(ProductModel model)
+        public async Task<IActionResult> DeleteAsync(ProductModel model)
         {
-            _productRepository.Delete(model.Id);
+          await  _productRepository.DeleteAsync(model.Id);
             _notify.Success("Ürün Silindi");
             return RedirectToAction("Index");
 
