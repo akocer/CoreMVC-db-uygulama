@@ -13,6 +13,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped(typeof(GenericRepository<>));
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<CategoryRepository>();
+builder.Services.AddScoped<TodoRepository>();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {

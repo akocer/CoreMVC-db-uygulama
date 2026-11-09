@@ -120,6 +120,30 @@ namespace uy01.Migrations
                         });
                 });
 
+            modelBuilder.Entity("uy01.Models.Todo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IsOK")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Todos");
+                });
+
             modelBuilder.Entity("uy01.Models.Product", b =>
                 {
                     b.HasOne("uy01.Models.Category", "Category")

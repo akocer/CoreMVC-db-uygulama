@@ -1,0 +1,162 @@
+﻿@{
+	ViewData["Title"] = "Index";
+}
+
+
+<div class="row">
+	<div class="col-md-8">
+		<div class="card">
+			<div class="card-header"><h3>Görevler</h3></div>
+			<div class="card-body">
+				<table class="table table-hover" id="tbTodos">
+					<thead>
+						<tr>
+							<th>Görev</th>
+							<th>Açıklama</th>
+							<th>Durumu</th>
+							<th>Düzenle </th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+
+
+
+			</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="card">
+			<div class="card-header"><h3 id ="baslik">Görev Ekle</h3></div>
+			<div class="card-body">
+				<input type="hidden" class="form-control" id ="txtId" />
+				<div class="mb-3">
+					<label>Görev Adı</label>
+					<input type="text" class="form-control" id="txtTitle" />
+				</div>
+				<div class="mb-3">
+					<label>Görev Açıklama</label>
+					<textarea rows="3" class="form-control" id ="txtDescription"></textarea>
+				</div>
+				<div class="mb-3">
+					<label>Durumu</label>
+					<select class="form-control" id ="cbIsOK">
+						<option value="0">Planda</option>
+						<option value="1">Devam Ediyor</option>
+						<option value="2">Tamamlandı</option>
+					</select>
+				</div>
+			</div>
+			<div class="card-footer">
+				<button class="btn btn-primary btn-sm" id="btnKaydet">Kaydet</button>
+				<button class="btn btn-primary btn-sm" id="btnDuzenle">Düzenle</button>
+				<button class="btn btn-danger btn-sm" id="btnSil">Sil</button>
+				<button class="btn btn-secondary btn-sm" id="btnVazgec">Vazgeç</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		$(document).ready(function(){
+		$("#btnDuzenle").hide();
+		$("#btnSil").hide();
+		$("#txtId").val("0");
+		GetList();
+		function GetList(){
+			$.ajax({
+				url:"/Todo/List",
+				method:"Get",
+				data:"",
+				success:function(d){
+				//console.log(d);
+					DataToTable(d);
+				},
+				error:function(){}
+			});
+		}
+
+		function DataToTable(data){
+
+			$("#tbTodos tbody").empty();
+			var rows="";
+			$.each(data,function(i,item){
+			rows+="<tr>";
+			rows+="<td>" + item.title + "</td>";
+			rows+="<td>" + item.description + "</td>";
+			if (item.isOK==0){
+			rows+='<td><span class="badge bg-danger text-white">Planda</span></td>';
+			}
+			if (item.isOK==1){
+			rows+='<td><span class="badge bg-warning text-white">Devam Ediyor</span></td>';
+			}
+			if (item.isOK==2){
+				rows+='<td><span class="badge bg-success text-white">Tammalandı</span></td>';
+			}
+			rows+='<td><button class="btn btn-primary btn-sm btnEdit" data-id="'+item.id+'">Düzenle</button> </td>';
+			rows+="</tr>"
+			});
+			$("#tbTodos tbody").append(rows);
+
+
+		}
+
+
+		$("#btnKaydet").click(function(){
+		var id=$("#txtId").val();
+		var title=$("#txtTitle").val();
+		var description=$("#txtDescription").val();
+		var isOK=$("#cbIsOK").val();
+
+		var todo={
+			Id: id,
+			Title:title,
+			description:description,
+			IsOK:isOK
+		}
+
+		$.ajax({
+				url:"/Todo/AddUpdate",
+				method:"Post",
+				data:todo,
+				success:function(d){
+					GetList();
+				},
+				error:function(){}
+
+		});
+		});
+
+				$(document).on("click",".btnEdit",function(){
+					$("#baslik").html("Görev Düzenle");
+				var id=$(this).attr("data-id");
+						$.ajax({
+						url:"/Todo/GetById/"+id,
+						method:"Get",
+						data:"",
+						success:function(data){
+						$("#txtId").val(data.id);
+						$("#txtTitle").val(data.title);
+						$("#txtDescription").val(data.description);
+						$("#cbIsOK").val(data.isOK);
+						},
+						error:function(){}
+					});
+
+				});
+
+			$("#btnVazgec").click(function(){
+					$("#baslik").html("Görev Ekle");
+				    $("#txtId").val("0");
+				    $("#txtTitle").val("");
+				    $("#txtDescription").val("");
+				    $("#cbIsOK").val(0);
+			
+			});
+
+
+});
+	</script>
+}

@@ -10,6 +10,7 @@ namespace uy01.Mapping
         {
             CreateMap<Product, ProductModel>().ReverseMap();
             CreateMap<Category, CategoryModel>().ReverseMap();
+            CreateMap<Todo, TodoModel>().ReverseMap();
         }
     }
 }

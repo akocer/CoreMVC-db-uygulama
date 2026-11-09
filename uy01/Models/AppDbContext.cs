@@ -7,6 +7,7 @@ namespace uy01.Models
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Todo> Todos { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
